@@ -1,146 +1,137 @@
-const fs = require('fs').promises;
+const { promises: fs } = require('fs');
 const path = require('path');
 
-const DATA_DIRECTORY = path.join(__dirname, '../data');
-const SHOPPING_CART_FILE = path.join(DATA_DIRECTORY, 'cart.json');
+const DATA_DIR = path.resolve(__dirname, '../data');
+const CART_FILE_PATH = path.join(DATA_DIR, 'cart.json');
 
 class CartModel {
     static async init() {
         try {
-            await fs.mkdir(DATA_DIRECTORY, { recursive: true });
+            await fs.mkdir(DATA_DIR, { recursive: true });
             try {
-                await fs.access(SHOPPING_CART_FILE);
+                await fs.access(CART_FILE_PATH);
             } catch {
-                await fs.writeFile(SHOPPING_CART_FILE, '[]', 'utf8');
+                await fs.writeFile(CART_FILE_PATH, '[]', 'utf8');
             }
-        } catch (error) {
-            console.error('Error inicializando CartModel:', error);
-            throw error;
+        } catch (err) {
+            console.error('Error en la inicialización del modelo de carrito:', err);
+            throw err;
         }
     }
 
-    static async getShoppingCart(emailU) {
+    static async getShoppingCart(userEmail) {
         try {
             await this.init();
-            const database = await fs.readFile(SHOPPING_CART_FILE, 'utf8');
-            const shoppingcarts = JSON.parse(database);
+            const fileContent = await fs.readFile(CART_FILE_PATH, 'utf8');
+            const carts = JSON.parse(fileContent);
 
-            const userCart = shoppingcarts.find(cart => cart.emailU === emailU);
+            const userCart = carts.find(cart => cart.userEmail === userEmail);
             return userCart ? userCart.items : [];
-        } catch (error) {
-            console.error('Error al obtener el carrito:', error);
-            throw error;
+        } catch (err) {
+            console.error('Error al obtener el carrito:', err);
+            throw err;
         }
     }
 
-    static async addToShoppingCart(emailU, product) {
+    static async addToShoppingCart(userEmail, product) {
         try {
             await this.init();
-            const database = await fs.readFile(SHOPPING_CART_FILE, 'utf8');
-            const shoppingcarts = JSON.parse(database);
+            const fileContent = await fs.readFile(CART_FILE_PATH, 'utf8');
+            const carts = JSON.parse(fileContent);
 
-            const cartIndex = shoppingcarts.findIndex(cart => cart.emailU === emailU);
+            const cartIdx = carts.findIndex(cart => cart.userEmail === userEmail);
 
-            if (cartIndex === -1) {
-                // Crear un nuevo carrito para el usuario
+            if (cartIdx === -1) {
                 const newCart = {
-                    emailU,
+                    userEmail,
                     items: [{ ...product, quantity: 1 }]
                 };
-                shoppingcarts.push(newCart);
+                carts.push(newCart);
             } else {
-                // Verificar si el producto ya existe en el carrito
-                const existingItemIndex = shoppingcarts[cartIndex].items.findIndex(
-                    item => item.id === product.id
-                );
+                const productIdx = carts[cartIdx].items.findIndex(item => item.id === product.id);
 
-                if (existingItemIndex !== -1) {
-                    // Incrementar la cantidad si el producto ya existe
-                    shoppingcarts[cartIndex].items[existingItemIndex].quantity += 1;
+                if (productIdx !== -1) {
+                    carts[cartIdx].items[productIdx].quantity += 1;
                 } else {
-                    // Agregar el producto al carrito
-                    shoppingcarts[cartIndex].items.push({ ...product, quantity: 1 });
+                    carts[cartIdx].items.push({ ...product, quantity: 1 });
                 }
             }
 
-            await fs.writeFile(SHOPPING_CART_FILE, JSON.stringify(shoppingcarts, null, 2), 'utf8');
-            return shoppingcarts.find(cart => cart.emailU === emailU).items;
-        } catch (error) {
-            console.error('Error al agregar producto al carrito:', error);
-            throw error;
+            await fs.writeFile(CART_FILE_PATH, JSON.stringify(carts, null, 2), 'utf8');
+            return carts.find(cart => cart.userEmail === userEmail).items;
+        } catch (err) {
+            console.error('Error al agregar al carrito:', err);
+            throw err;
         }
     }
 
-    static async updateQuantity(emailU, productId, newQuantity) {
+    static async updateQuantity(userEmail, productId, newQuantity) {
         try {
             await this.init();
-            const database = await fs.readFile(SHOPPING_CART_FILE, 'utf8');
-            const shoppingcarts = JSON.parse(database);
+            const fileContent = await fs.readFile(CART_FILE_PATH, 'utf8');
+            const carts = JSON.parse(fileContent);
 
-            const cartIndex = shoppingcarts.findIndex(cart => cart.emailU === emailU);
-            if (cartIndex === -1) {
-                throw new Error('Carrito no encontrado para este usuario.');
+            const cartIdx = carts.findIndex(cart => cart.userEmail === userEmail);
+            if (cartIdx === -1) {
+                throw new Error('No se encontró el carrito.');
             }
 
-            const itemIndex = shoppingcarts[cartIndex].items.findIndex(item => item.id === productId);
-            if (itemIndex === -1) {
-                throw new Error('Producto no encontrado en el carrito.');
+            const itemIdx = carts[cartIdx].items.findIndex(item => item.id === productId);
+            if (itemIdx === -1) {
+                throw new Error('Producto no encontrado.');
             }
 
             if (newQuantity <= 0) {
-                shoppingcarts[cartIndex].items.splice(itemIndex, 1); // Eliminar producto
+                carts[cartIdx].items.splice(itemIdx, 1); 
             } else {
-                shoppingcarts[cartIndex].items[itemIndex].quantity = newQuantity; // Actualizar cantidad
+                carts[cartIdx].items[itemIdx].quantity = newQuantity; 
             }
 
-            await fs.writeFile(SHOPPING_CART_FILE, JSON.stringify(shoppingcarts, null, 2), 'utf8');
-            return shoppingcarts[cartIndex].items;
-        } catch (error) {
-            console.error('Error al actualizar la cantidad del producto:', error);
-            throw error;
+            await fs.writeFile(CART_FILE_PATH, JSON.stringify(carts, null, 2), 'utf8');
+            return carts[cartIdx].items;
+        } catch (err) {
+            console.error('Error al actualizar la cantidad del producto:', err);
+            throw err;
         }
     }
 
-    static async removeFromShoppingCart(emailU, productId) {
+    static async removeFromShoppingCart(userEmail, productId) {
         try {
             await this.init();
-            const database = await fs.readFile(SHOPPING_CART_FILE, 'utf8');
-            const shoppingcarts = JSON.parse(database);
+            const fileContent = await fs.readFile(CART_FILE_PATH, 'utf8');
+            const carts = JSON.parse(fileContent);
 
-            const cartIndex = shoppingcarts.findIndex(cart => cart.emailU === emailU);
-            if (cartIndex === -1) {
-                throw new Error('Carrito no encontrado para este usuario.');
+            const cartIdx = carts.findIndex(cart => cart.userEmail === userEmail);
+            if (cartIdx === -1) {
+                throw new Error('No se encontró el carrito.');
             }
 
-            // Filtrar el producto que se desea eliminar
-            shoppingcarts[cartIndex].items = shoppingcarts[cartIndex].items.filter(
-                item => item.id !== productId
-            );
+            carts[cartIdx].items = carts[cartIdx].items.filter(item => item.id !== productId);
 
-            await fs.writeFile(SHOPPING_CART_FILE, JSON.stringify(shoppingcarts, null, 2), 'utf8');
-            return shoppingcarts[cartIndex].items;
-        } catch (error) {
-            console.error('Error al eliminar producto del carrito:', error);
-            throw error;
+            await fs.writeFile(CART_FILE_PATH, JSON.stringify(carts, null, 2), 'utf8');
+            return carts[cartIdx].items;
+        } catch (err) {
+            console.error('Error al eliminar el producto del carrito:', err);
+            throw err;
         }
     }
 
-    static async clearShoppingCart(emailU) {
+    static async clearShoppingCart(userEmail) {
         try {
             await this.init();
-            const database = await fs.readFile(SHOPPING_CART_FILE, 'utf8');
-            const shoppingcarts = JSON.parse(database);
+            const fileContent = await fs.readFile(CART_FILE_PATH, 'utf8');
+            const carts = JSON.parse(fileContent);
 
-            const cartIndex = shoppingcarts.findIndex(cart => cart.emailU === emailU);
-            if (cartIndex !== -1) {
-                shoppingcarts[cartIndex].items = []; // Vaciar el carrito
+            const cartIdx = carts.findIndex(cart => cart.userEmail === userEmail);
+            if (cartIdx !== -1) {
+                carts[cartIdx].items = []; 
             }
 
-            await fs.writeFile(SHOPPING_CART_FILE, JSON.stringify(shoppingcarts, null, 2), 'utf8');
+            await fs.writeFile(CART_FILE_PATH, JSON.stringify(carts, null, 2), 'utf8');
             return [];
-        } catch (error) {
-            console.error('Error al limpiar el carrito:', error);
-            throw error;
+        } catch (err) {
+            console.error('Error al limpiar el carrito:', err);
+            throw err;
         }
     }
 }

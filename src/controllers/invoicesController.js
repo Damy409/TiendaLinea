@@ -1,10 +1,10 @@
 const fs = require('fs').promises;
 const path = require('path');
-const invoicesModel = require('../models/invoicesModel');
-const shoppingCartModel = require('../models/shoppingCartModel');
+const invoices = require('../models/invoicesModel');
+const shoppingCart = require('../models/shoppingCartModel');
 
-const DATA_DIRECTORY = path.join(__dirname, '../data');
-const INVOICES_FILE = path.join(DATA_DIRECTORY, 'bills.json');
+const dataDir = path.join(__dirname, '../data');
+const billsFile = path.join(dataDir, 'bills.json');
 
 class InvoiceController {
     /**
@@ -12,14 +12,14 @@ class InvoiceController {
      */
     static async init() {
         try {
-            await fs.mkdir(DATA_DIRECTORY, { recursive: true });
+            await fs.mkdir(dataDir, { recursive: true });
             try {
-                await fs.access(INVOICES_FILE);
+                await fs.access(billsFile);
             } catch {
-                await fs.writeFile(INVOICES_FILE, '[]', 'utf8');
+                await fs.writeFile(billsFile, '[]', 'utf8');
             }
         } catch (error) {
-            console.error('Error al inicializar InvoiceController:', error);
+            console.error('Error en la configuración de InvoiceController:', error);
             throw error;
         }
     }
@@ -28,22 +28,16 @@ class InvoiceController {
      * Crea una nueva factura para el usuario y vacía el carrito de compras.
      */
     static async createInvoices(req, res) {
+        const userEmail = req.user.email;
         try {
-            const userEmail = req.user.email;
-            const shoppingCartItems = await shoppingCartModel.getShoppingCart(userEmail);
-
-            const invoice = await invoicesModel.createInvoice(userEmail, shoppingCartItems);
-
-            // Limpiar carrito después de la compra
-            await shoppingCartModel.clearShoppingCart(userEmail);
+            const cartItems = await shoppingCart.getShoppingCart(userEmail);
+            const invoice = await invoices.createInvoice(userEmail, cartItems);
+            await shoppingCart.clearShoppingCart(userEmail);
 
             res.status(201).json({ message: 'Compra realizada con éxito', invoice });
         } catch (error) {
             console.error('Error al crear la factura:', error);
-            res.status(500).json({
-                message: 'Error al procesar la compra',
-                error: error.message
-            });
+            res.status(500).json({ message: 'Error procesando la compra', error: error.message });
         }
     }
 
@@ -51,17 +45,13 @@ class InvoiceController {
      * Obtiene las facturas del usuario autenticado.
      */
     static async getInvoices(req, res) {
+        const userEmail = req.user.email;
         try {
-            const userEmail = req.user.email;
-            const invoices = await invoicesModel.getInvoicesByUser(userEmail);
-
-            res.json(invoices);
+            const userInvoices = await invoices.getInvoicesByUser(userEmail);
+            res.json(userInvoices);
         } catch (error) {
-            console.error('Error al obtener las facturas:', error);
-            res.status(500).json({
-                message: 'Error al obtener el historial de compras',
-                error: error.message
-            });
+            console.error('Error al obtener facturas:', error);
+            res.status(500).json({ message: 'Error al obtener el historial de compras', error: error.message });
         }
     }
 }

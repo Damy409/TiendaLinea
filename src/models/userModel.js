@@ -20,55 +20,52 @@ class UserModel {
                 await fs.writeFile(USERS_FILE, '[]');
             }
         } catch (error) {
-            console.error('Error initializing UserModel:', error);
+            console.error('Error inicializando el modelo de usuario:', error);
         }
     }
 
     // Obtiene todos los usuarios
     static async getAllUsers() {
         try {
-            await this.init();
-            const data = await fs.readFile(USERS_FILE, 'utf8');
-            return JSON.parse(data || '[]');
-        } catch (error) {
-            console.error('Error getting users:', error);
-            return [];
+          await this.init();
+          const data = await fs.readFile(USERS_FILE, 'utf8');
+          return JSON.parse(data || '[]');
+        } catch (err) {
+          console.error('Error obteniendo usuarios:', err);
+          return [];
         }
-    }
+      }
 
     // Busca un usuario por correo electrónico
     static async findByEmail(email) {
         const users = await this.getAllUsers();
         return users.find(user => user.email === email);
-    }
+      }
 
     // Crea un nuevo usuario y lo guarda en el archivo
     static async create(userData) {
         try {
-            const users = await this.getAllUsers();
-            const hashedPassword = await bcrypt.hash(userData.password, 10);
-            
-            // Crear un nuevo usuario con la contraseña hasheada
-            const newUser = {
-                id: Date.now().toString(),
-                email: userData.email,
-                password: hashedPassword,
-                role: userData.role || 'client',
-                createdAt: new Date().toISOString()
-            };
-
-            // Agregar el nuevo usuario al array
-            users.push(newUser);
-            await fs.writeFile(USERS_FILE, JSON.stringify(users, null, 2));
-            
-            // Retornar el usuario sin la contraseña
-            const { password, ...userWithoutPassword } = newUser;
-            return userWithoutPassword;
+          const users = await this.getAllUsers();
+          const hashedPassword = await bcrypt.hash(userData.password, 15);
+    
+          const newUser = {
+            id: Date.now().toString(),
+            email: userData.email,
+            password: hashedPassword,
+            role: userData.role || 'client',
+            createdAt: new Date().toISOString()
+          };
+    
+          users.push(newUser);
+          await fs.writeFile(USERS_FILE, JSON.stringify(users, null, 2));
+    
+          const { password, ...userWithoutPassword } = newUser;
+          return userWithoutPassword;
         } catch (error) {
-            console.error('Error al crear un usuario:', error);
-            throw new Error('Error al crear un usuario');
+          console.error('Error creando un usuario:', error);
+          throw new Error('Error al crear el usuario');
         }
+      }
     }
-}
-
-module.exports = UserModel;
+    
+    module.exports = UserModel;

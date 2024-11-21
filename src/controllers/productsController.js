@@ -5,45 +5,47 @@ exports.createProduct = async (req, res) => {
     try {
         const { name, price, image } = req.body;
 
-        // Validación de datos
+        // Comprobación de los datos
         if (!name || !price || !image) {
             return res.status(400).json({ 
-                message: 'Todos los campos (name, price, image) son obligatorios.',
-                received: { name, price, image } 
+                message: 'Se requieren los campos: name, price e image.',
+                receivedData: { name, price, image } 
             });
         }
 
-        // Validación del precio
+        // Comprobación del precio
         if (isNaN(price) || price <= 0) {
             return res.status(400).json({ 
-                message: 'El precio debe ser un número válido mayor a 0.' 
+                message: 'El precio debe ser un número válido mayor que 0.' 
             });
         }
 
-        const product = await ProductModel.createNewProduct({ name, price, image });
+        // Crear el producto
+        const product = await ProductModel.createProduct({ name, price, image });
 
-        res.status(201).json({ 
-            message: 'Producto creado exitosamente.',
+        return res.status(201).json({ 
+            message: 'Producto creado con éxito.',
             product 
         });
-    } catch (error) {
-        console.error('Error en createProduct:', error);
+    } catch (err) {
+        console.error('Error al crear el producto:', err);
         res.status(500).json({ 
-            message: 'Error al crear el producto.',
-            error: error.message 
+            message: 'Hubo un error al crear el producto.',
+            errorDetails: err.message 
         });
     }
 };
 
+// Obtener productos
 exports.getProducts = async (req, res) => {
     try {
-        const products = await ProductModel.getProducts();
-        res.json(products);
-    } catch (error) {
-        console.error('Error al obtener los productos:', error);
-        res.status(500).json({ 
-            message: 'Error al obtener los productos.',
-            error: error.message 
+        const products = await ProductModel.getAllProducts();
+        res.status(200).json(products);
+    } catch (err) {
+        console.error('Error al recuperar los productos:', err);
+        res.status(500).json({
+            message: 'Hubo un problema al obtener los productos.',
+            errorDetails: err.message
         });
     }
 };

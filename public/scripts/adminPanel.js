@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         productForm.parentNode.insertBefore(messageDiv, productForm);
 
         // Remover el mensaje después de 3 segundos
-        setTimeout(() => messageDiv.remove(), 3000);
+        setTimeout(() => messageDiv.remove(), 3001);
     }
 
     // Función para manejar el envío del formulario

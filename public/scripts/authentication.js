@@ -30,7 +30,7 @@ const handleRegister = async (e) => {
     const role = document.getElementById('role').value;
 
     try {
-        const response = await fetch('/api/auth/register', {
+        const response = await fetch('${API_URL}/auth/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -62,7 +62,7 @@ const handleUserLogin = async (e) => {
     const password = document.getElementById('password').value;
 
     try {
-        const response = await fetch('/api/auth/userLogin', {
+        const response = await fetch('${API_URL}/auth/userLogin', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

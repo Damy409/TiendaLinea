@@ -2,7 +2,7 @@ const { promises: fs } = require('fs');
 const path = require('path');
 
 const DATA_DIR = path.resolve(__dirname, '../data');
-const CART_FILE_PATH = path.join(DATA_DIR, 'cart.json');
+const CART_FILE_PATH = path.join(DATA_DIR, 'shoppingCartData.json');
 
 class CartModel {
     static async init() {

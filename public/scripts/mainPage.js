@@ -25,7 +25,7 @@ const showMessage = (message, isError = false) => {
     document.body.appendChild(alert); // Añadir la alerta al cuerpo del documento
 
     // Eliminar el mensaje después de 3 segundos
-    setTimeout(() => alert.remove(), 3000);
+    setTimeout(() => alert.remove(), 3001);
 };
 
 /**

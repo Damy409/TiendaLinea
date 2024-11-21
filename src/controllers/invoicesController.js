@@ -3,8 +3,8 @@ const path = require('path');
 const invoices = require('../models/invoicesModel');
 const shoppingCart = require('../models/shoppingCartModel');
 
-const dataDir = path.join(__dirname, '../data');
-const billsFile = path.join(dataDir, 'bills.json');
+const data_Dir = path.join(__dirname, '../data');
+const bills_File = path.join(data_Dir, 'invoicesData.json');
 
 class InvoiceController {
     /**
@@ -12,11 +12,11 @@ class InvoiceController {
      */
     static async init() {
         try {
-            await fs.mkdir(dataDir, { recursive: true });
+            await fs.mkdir(data_Dir, { recursive: true });
             try {
-                await fs.access(billsFile);
+                await fs.access(bills_File);
             } catch {
-                await fs.writeFile(billsFile, '[]', 'utf8');
+                await fs.writeFile(bills_File, '[]', 'utf8');
             }
         } catch (error) {
             console.error('Error en la configuración de InvoiceController:', error);

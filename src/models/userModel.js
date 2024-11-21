@@ -4,7 +4,7 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 
 const DATA_DIRECTORY = path.join(__dirname, '../data');
-const USERS_FILE = path.join(DATA_DIRECTORY, 'users.json');
+const USERS_FILE = path.join(DATA_DIRECTORY, 'usersAccounts.json');
 
 class UserModel {
     // Inicializa el directorio y archivo de usuarios si no existen

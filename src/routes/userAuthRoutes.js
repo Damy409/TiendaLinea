@@ -17,7 +17,7 @@ router.post('/register', userAuthController.registerUser);
 // Ruta para iniciar sesión con un usuario existente
 // Cuando el cliente envía una solicitud POST a '/login', se ejecuta el método loginUser del controlador
 // Este método valida las credenciales del usuario y devuelve una respuesta adecuada (por ejemplo, un token)
-router.post('/login', userAuthController.loginUser);
+router.post('/userLogin', userAuthController.loginUser);
 
 // Exporta el enrutador para que pueda ser utilizado en la configuración de la aplicación principal
 module.exports = router;

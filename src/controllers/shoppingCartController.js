@@ -2,10 +2,10 @@ const path = require('path');
 const fs = require('fs').promises;
 const CartModel = require('../models/shoppingCartModel');
 
-const INVOICES_PATH = path.join(__dirname, '../data/bills.json');
+const INVOICES_PATH = path.join(__dirname, '../data/invoicesData.json');
 
 // Inicialización del archivo bills.json
-async function initInvoices() {
+async function initializeInvoices() {
     try {
         await fs.access(INVOICES_PATH);
     } catch {
@@ -91,7 +91,7 @@ exports.removeFromShoppingCart = async (req, res) => {
 
 exports.checkout = async (req, res) => {
     try {
-        await initInvoices();
+        await initializeInvoices();
         const userEmail = req.user.email;
         const itemsInCart = await CartModel.getShoppingCart(userEmail);
 

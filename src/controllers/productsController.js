@@ -39,7 +39,7 @@ exports.createProduct = async (req, res) => {
 // Obtener productos
 exports.getProducts = async (req, res) => {
     try {
-        const products = await ProductModel.getAllProducts();
+        const products = await ProductModel.getProducts();
         res.status(200).json(products);
     } catch (err) {
         console.error('Error al recuperar los productos:', err);

@@ -1,17 +1,17 @@
 const fs = require('fs').promises;
 const path = require('path');
 
-const dataDir = path.join(__dirname, '../data');
-const billsFile = path.join(dataDir, 'bills.json');
+const DATADIR = path.join(__dirname, '../data');
+const BILLSFILE = path.join(DATADIR, 'invoicesData.json');
 
 class Invoices {
     static async init() {
         try {
-            await fs.mkdir(dataDir, { recursive: true });
+            await fs.mkdir(DATADIR, { recursive: true });
             try {
-                await fs.access(billsFile);
+                await fs.access(BILLSFILE);
             } catch {
-                await fs.writeFile(billsFile, '[]', 'utf8');
+                await fs.writeFile(BILLSFILE, '[]', 'utf8');
             }
         } catch (error) {
             console.error('Error en la configuración de BillModel:', error);
@@ -21,8 +21,8 @@ class Invoices {
 
     static async createInvoice(userEmail, cartItems) {
         try {
-            await this.setup();
-            const currentData = await fs.readFile(billsFile, 'utf8');
+            await this.init();
+            const currentData = await fs.readFile(BILLSFILE, 'utf8');
             const invoices = JSON.parse(currentData);
 
             const newInvoice = {
@@ -34,7 +34,7 @@ class Invoices {
             };
 
             invoices.push(newInvoice);
-            await fs.writeFile(billsFile, JSON.stringify(invoices, null, 2), 'utf8');
+            await fs.writeFile(BILLSFILE, JSON.stringify(invoices, null, 2), 'utf8');
             return newInvoice;
         } catch (error) {
             console.error('Error al crear la factura:', error);
@@ -44,8 +44,8 @@ class Invoices {
 
     static async getInvoicesByUser(userEmail) {
         try {
-            await this.setup();
-            const currentData = await fs.readFile(billsFile, 'utf8');
+            await this.init();
+            const currentData = await fs.readFile(BILLSFILE, 'utf8');
             const invoices = JSON.parse(currentData);
 
             return invoices.filter(invoice => invoice.userEmail === userEmail);

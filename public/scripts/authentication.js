@@ -44,12 +44,12 @@ const handleRegister = async (e) => {
 
     try {
         // Realiza la petición POST a la API de registro
-        const response = await fetch(`${API_URL}/auth/register`, {
+        const response = await fetch('/api/auth/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ email, password, role }) // Datos del formulario en formato JSON
+            body: JSON.stringify({ email, password, role })
         });
 
         const data = await response.json(); // Convierte la respuesta en JSON
@@ -82,13 +82,12 @@ const handleUserLogin = async (e) => {
     const password = document.getElementById('password').value;
 
     try {
-        // Realiza la petición POST a la API de login
-        const response = await fetch(`${API_URL}/auth/userLogin`, {
+        const response = await fetch('/api/auth/userLogin', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ email, password }) // Datos del formulario en formato JSON
+            body: JSON.stringify({ email, password })
         });
 
         const data = await response.json(); // Convierte la respuesta en JSON

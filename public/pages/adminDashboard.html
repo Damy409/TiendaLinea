@@ -6,7 +6,159 @@
     <title>Administración de Productos</title>
     <link rel="stylesheet" href="/css/styles.css">
     <style>
+        /* Estilos generales */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
 
+        /* Estilos del encabezado */
+        header {
+            background-color: #28a745;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        /* Estilos para la barra de navegación */
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0;
+            text-align: center;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 5px 10px;
+        }
+
+        nav ul li a:hover {
+            background-color: #218838;
+            border-radius: 4px;
+        }
+
+        /* Estilos del contenedor principal */
+        main {
+            padding: 20px;
+        }
+
+        /* Formulario de agregar producto */
+        #add-product {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        #add-product h2 {
+            margin-top: 0;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            font-size: 16px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .form-group input:focus {
+            border-color: #28a745;
+            outline: none;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Mensajes de estado */
+        #message-container {
+            margin-top: 15px;
+        }
+
+        /* Lista de productos */
+        #product-list-admin {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #product-list-admin h2 {
+            margin-top: 0;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        table td img {
+            max-width: 100px;
+            border-radius: 5px;
+        }
+
+        /* Resaltar fila al pasar el mouse */
+        table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
     </style>
 </head>
 <body>
@@ -86,8 +238,6 @@
             </div>
         </section>
     </main>
-
-
 
     <!-- Asegúrate de que la ruta al script sea correcta -->
     <script src="/js/adminPanel.js"></script>

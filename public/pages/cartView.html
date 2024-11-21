@@ -6,7 +6,167 @@
     <title>Carrito de Compras</title>
     <link rel="stylesheet" href="/css/styles.css">
     <style>
+        /* Estilos generales */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
 
+        /* Estilos del encabezado */
+        header {
+            background-color: #28a745;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        /* Estilos para la barra de navegación */
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0;
+            text-align: center;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 5px 10px;
+        }
+
+        nav ul li a:hover {
+            background-color: #218838;
+            border-radius: 4px;
+        }
+
+        /* Estilos del contenedor principal */
+        main {
+            padding: 20px;
+        }
+
+        #cart-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-item h4 {
+            margin: 0;
+        }
+
+        .cart-item p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .cart-item span {
+            font-weight: bold;
+        }
+
+        /* Sección de total */
+        .total-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .total-section h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .btn-primary {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        /* Modal de historial de compras */
+        #bills-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #bills-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        #bills-content h2 {
+            margin-top: 0;
+        }
+
+        #bills-list {
+            margin: 20px 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        #bills-list p {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        #close-bills {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #close-bills:hover {
+            background-color: #c82333;
+        }
     </style>
 </head>
 <body>
@@ -34,7 +194,7 @@
         <div id="bills-content">
             <h2>Historial de Compras</h2>
             <div id="bills-list">
-
+                <!-- Historial de compras renderizado aquí -->
             </div>
             <button id="close-bills">Cerrar</button>
         </div>

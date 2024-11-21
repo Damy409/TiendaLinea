@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Bienvenido a tu Carrito de Compras</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/pages/userLogin.html" id="logout">Cerrar sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div id="cart-container">
+            <!-- Los items del carrito se renderizarán aquí -->
+        </div>
+        <div class="total-section">
+            <h3>Total: $<span id="cart-total">0.00</span></h3>
+            <button id="checkout-btn" class="btn-primary">Realizar Pago</button>
+        </div>
+    </main>
+
+    <div id="bills-modal">
+        <div id="bills-content">
+            <h2>Historial de Compras</h2>
+            <div id="bills-list">
+
+            </div>
+            <button id="close-bills">Cerrar</button>
+        </div>
+    </div>
+
+    <script src="/js/shoopingCart.js"></script>
+    <!-- Script para manejar el cierre de sesión -->
+    <script>
+        document.getElementById('logout').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            window.location.href = '/pages/userLogin.html';
+        });
+    </script>
+</body>
+</html>

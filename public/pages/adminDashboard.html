@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración de Productos</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Bienvenido a Mi Tienda Online</h1>
+        <nav>
+            <ul>
+                <li><a href="/pages/home.html">Tienda</a></li>
+                <li><a href="/pages/adminDashboard.html">Productos</a></li>
+                <li><a href="/pages/userLogin.html" id="logout">Cerrar sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="add-product">
+            <h2>¿Desea agregar un Producto?</h2>
+            <!-- Contenedor para mensajes -->
+            <div id="message-container"></div>
+            
+            <form id="product-form" action="javascript:void(0);" novalidate>
+                <div class="form-group">
+                    <label for="name">Digite el nombre del producto:</label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        required 
+                        minlength="3"
+                        placeholder="Nombre del producto"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Digite el precio del producto:</label>
+                    <input 
+                        type="number" 
+                        id="price" 
+                        name="price" 
+                        required 
+                        min="0" 
+                        step="0.01"
+                        placeholder="Ingrese el precio"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="image">Digite el URL de la imagen del producto:</label>
+                    <input 
+                        type="url" 
+                        id="image" 
+                        name="image" 
+                        required
+                        placeholder="URL de la imagen"
+                    >
+                </div>
+
+                <button type="submit">Agregar</button>
+            </form>
+        </section>
+
+        <section id="product-list-admin">
+            <h2>Lista de Productos Agregados</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Precio</th>
+                            <th>Imagen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-product-list">
+                        <!-- Los productos se cargarán aquí dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+
+
+    <!-- Asegúrate de que la ruta al script sea correcta -->
+    <script src="/js/adminPanel.js"></script>
+
+    <!-- Script para manejar el cierre de sesión -->
+    <script>
+        document.getElementById('logout').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            window.location.href = '/pages/userLogin.html';
+        });
+    </script>
+</body>
+</html>

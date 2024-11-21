@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Compras</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Historial de Compras</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/pages/cartView.html">Carrito</a></li>
+                <li><a href="#" id="logout">Cerrar sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div id="purchase-history-container">
+            <!-- Facturas renderizadas aquí -->
+        </div>
+    </main>
+    <script>
+        async function loadPurchaseHistory() {
+            try {
+                const response = await fetch('/api/cart/history');
+                const data = await response.json();
+                if (response.ok) {
+                    const container = document.getElementById('purchase-history-container');
+                    container.innerHTML = data.map(bill => `
+                        <div class="bill">
+                            <h3>Factura #${bill.id}</h3>
+                            <p>Email: ${bill.userEmail}</p>
+                            <ul>
+                                ${bill.items.map(item => `<li>${item.name} - ${item.quantity}x</li>`).join('')}
+                            </ul>
+                            <p>Total: $${bill.total}</p>
+                        </div>
+                    `).join('');
+                } else {
+                    alert('Error cargando el historial.');
+                }
+            } catch (error) {
+                console.error('Error cargando historial:', error);
+            }
+        }
+        loadPurchaseHistory();
+    </script>
+</body>
+</html>

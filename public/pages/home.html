@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda en Línea</title>
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+<body>
+    <header>
+        <h1>Bienvenido a Tienda en Línea</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/pages/cartView.html">Carrito</a></li>
+                <li><a href="/pages/userLogin.html">Cerrar Sesion</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="product-list">
+            <h2>Productos Disponibles</h2>
+            <div id="products-container">
+                <!-- Los productos se renderizarán aquí -->
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/mainPage.js"></script>
+
+        <!-- Script para manejar el cierre de sesión -->
+        <script>
+            document.getElementById('logout').addEventListener('click', function(e) {
+                e.preventDefault();
+                localStorage.removeItem('token');
+                window.location.href = '/pages/userLogin.html';
+            });
+        </script>
+</body>
+</html>

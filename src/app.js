@@ -23,21 +23,20 @@ app.use(express.static(path.join(__dirname, "../public")));
 app.use("/api/auth", userAuthRoutes);
 app.use('/api/products', productsRoutes);
 app.use('/api/cart', shoppingCartRoutes);
-
 app.use('/api/bills', invoicesRoutes);
 
 // ... otras rutas
 // Ruta para manejar las vistas HTML
 app.get(["/", "/adminDashboard", "/userLogin", "/register"], (req, res) => {
-    const page = req.path === "/" ? "userLogin" : req.path.slice(1);
-    res.sendFile(path.join(__dirname, `../public/pages/${page}.html`));
+    const pages = req.path === "/" ? "userLogin" : req.path.slice(1);
+    res.sendFile(path.join(__dirname, `../public/pages/${pages}.html`));
 });
 
 // Manejador de errores
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ 
-        message: 'Algo salió mal!',
+        message: 'Ups ocurrio un error!',
         error: process.env.NODE_ENV === 'development' ? err.message : {}
     });
 });

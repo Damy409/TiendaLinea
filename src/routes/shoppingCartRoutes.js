@@ -16,13 +16,13 @@ const shoppingCartController = require('../controllers/shoppingCartController');
 // La ruta usa el middleware 'authenticateToken' para asegurar que solo los usuarios autenticados puedan acceder a la información del carrito
 // Cuando el cliente envía una solicitud GET a '/', se ejecuta el método getShoppingCart del controlador
 // Este método devuelve los productos actuales en el carrito de compras del usuario autenticado
-router.get('/', authenticateToken, shoppingCartController.getShoppingCart);
+router.get('/', authenticateToken, shoppingCartController.getCart);
 
 // Ruta para agregar un producto al carrito de compras
 // La ruta usa el middleware 'authenticateToken' para verificar que el usuario esté autenticado
 // Cuando el cliente envía una solicitud POST a '/add', se ejecuta el método addToShoppingCart del controlador
 // Este método agrega el producto especificado al carrito de compras del usuario autenticado
-router.post('/add', authenticateToken, shoppingCartController.addToShoppingCart);
+router.post('/add', authenticateToken, shoppingCartController.addToCart);
 
 // Ruta para actualizar la cantidad de un producto en el carrito de compras
 // La ruta usa el middleware 'authenticateToken' para verificar la autenticación del usuario
@@ -34,7 +34,7 @@ router.put('/update', authenticateToken, shoppingCartController.updateQuantity);
 // La ruta usa el middleware 'authenticateToken' para verificar que el usuario esté autenticado
 // Cuando el cliente envía una solicitud DELETE a '/remove/:productId', se ejecuta el método removeFromShoppingCart del controlador
 // Este método elimina el producto con el ID especificado del carrito de compras del usuario autenticado
-router.delete('/remove/:productId', authenticateToken, shoppingCartController.removeFromShoppingCart);
+router.delete('/remove/:productId', authenticateToken, shoppingCartController.removeFromCart);
 
 // Exporta el enrutador para que pueda ser utilizado en la configuración de la aplicación principal
 module.exports = router;

@@ -1,48 +1,42 @@
-// Esperar a que el contenido del documento esté completamente cargado
 document.addEventListener('DOMContentLoaded', () => {
-    // Referencias a los elementos del DOM
+    const cartContainer = document.getElementById('cart-container');
+    const cartTotalElement = document.getElementById('cart-total');
+    const checkoutBtn = document.getElementById('checkout-btn');
     const billsBtn = document.getElementById('bills-btn');
     const billsModal = document.getElementById('bills-modal');
     const billsList = document.getElementById('bills-list');
     const closeBillsBtn = document.getElementById('close-bills');
-    const cartContainer = document.getElementById('cart-container');
-    const cartTotalElement = document.getElementById('cart-total');
-    const checkoutBtn = document.getElementById('checkout-btn');
 
-
-    // Cargar el carrito de compras desde la API
+    // Función para cargar el carrito
     async function loadCart() {
         try {
-            // Obtener los artículos del carrito desde la API
-            const cartResponse = await fetch('/api/cart', {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            const response = await fetch('/api/cart', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
             });
-            // Convertir la respuesta en formato JSON
-            const cartItems = await cartResponse.json();
-            // Renderizar los artículos del carrito
+            const cartItems = await response.json();
             renderCart(cartItems);
-        } catch (err) {
-            console.error('Error al cargar el carrito:', err);
+        } catch (error) {
+            console.error('Error al cargar el carrito:', error);
         }
     }
 
-    // Renderizar los artículos en el carrito en el HTML
+    // Función para renderizar el carrito
     function renderCart(items) {
-        cartContainer.innerHTML = ''; // Limpiar el contenido del carrito
+        cartContainer.innerHTML = '';
         let total = 0;
 
-        // Si el carrito está vacío, mostrar mensaje
         if (items.length === 0) {
             cartContainer.innerHTML = '<div class="empty-cart">Tu carrito está vacío</div>';
             cartTotalElement.textContent = '0.00';
             return;
         }
 
-        // Iterar sobre cada artículo y renderizarlo
         items.forEach(item => {
-            const cartItemElement = document.createElement('div');
-            cartItemElement.classList.add('cart-item');
-            cartItemElement.innerHTML = `
+            const cartItemDiv = document.createElement('div');
+            cartItemDiv.classList.add('cart-item');
+            cartItemDiv.innerHTML = `
                 <img src="${item.image}" alt="${item.name}">
                 <div>
                     <h3>${item.name}</h3>
@@ -55,18 +49,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p>Subtotal: $${item.price * item.quantity}</p>
                 </div>
             `;
-            cartContainer.appendChild(cartItemElement);
+            cartContainer.appendChild(cartItemDiv);
             total += item.price * item.quantity;
         });
 
-        // Mostrar el total del carrito
         cartTotalElement.textContent = total.toFixed(2);
     }
 
-    // Actualizar la cantidad de un producto en el carrito
+
+    // Función para actualizar cantidad
     async function updateQuantity(productId, newQuantity) {
         try {
-            // Hacer solicitud a la API para actualizar la cantidad del producto
             const response = await fetch('/api/cart/update', {
                 method: 'PUT',
                 headers: {
@@ -75,21 +68,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 body: JSON.stringify({ productId, quantity: newQuantity })
             });
-            // Obtener el carrito actualizado
             const updatedCart = await response.json();
-            // Renderizar el carrito actualizado
             renderCart(updatedCart);
-        } catch (err) {
-            console.error('Error al actualizar la cantidad:', err);
+        } catch (error) {
+            console.error('Error al actualizar cantidad:', error);
         }
     }
 
-    // Procedimiento para completar la compra
+    // Función para comprar
     async function checkout() {
         try {
-            // Obtener el email del usuario desde el token JWT
             const userEmail = parseJwt(localStorage.getItem('token')).email;
-            // Obtener los artículos del carrito
             const cartResponse = await fetch('/api/cart', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -97,15 +86,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const cartItems = await cartResponse.json();
 
-            // Crear los datos de la factura
             const billData = {
-                userEmail,
+                userEmail: userEmail,
                 items: cartItems,
-                total: cartItems.reduce((total, item) => total + item.price * item.quantity, 0),
+                total: cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
                 date: new Date().toISOString()
             };
 
-            // Enviar la factura a la API para crearla
             const billResponse = await fetch('/api/bills/create', {
                 method: 'POST',
                 headers: {
@@ -117,26 +104,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (billResponse.ok) {
                 alert('Compra realizada con éxito');
-                // Limpiar el carrito después de la compra
+                // Recargar carrito vacío
                 renderCart([]);
             }
-        } catch (err) {
-            console.error('Error en la compra:', err);
+        } catch (error) {
+            console.error('Error en la compra:', error);
         }
     }
 
-    // Mostrar las facturas previas en el modal
+    // Función para ver facturas
     async function showBills() {
         try {
-            // Obtener las facturas desde la API
-            const billsResponse = await fetch('/api/bills', {
+            const response = await fetch('/api/bills', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
-            const bills = await billsResponse.json();
+            const bills = await response.json();
             
-            // Renderizar las facturas en la interfaz
             billsList.innerHTML = bills.map(bill => `
                 <div>
                     <h3>Factura - ${new Date(bill.date).toLocaleDateString()}</h3>
@@ -150,36 +135,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `).join('');
 
-            // Mostrar el modal con las facturas
             billsModal.style.display = 'block';
-        } catch (err) {
-            console.error('Error al cargar las facturas:', err);
+        } catch (error) {
+            console.error('Error al cargar facturas:', error);
         }
     }
 
-    // Función para parsear el token JWT y extraer los datos
+    // Función para parsear JWT
     function parseJwt(token) {
         const base64Url = token.split('.')[1];
         const base64 = base64Url.replace('-', '+').replace('_', '/');
         return JSON.parse(window.atob(base64));
     }
 
-    // Eventos de interacción con el usuario
-    checkoutBtn.addEventListener('click', checkout); // Evento para finalizar la compra
-    billsBtn.addEventListener('click', showBills); // Evento para mostrar las facturas previas
+
+    // Event listeners
+    checkoutBtn.addEventListener('click', checkout);
+    billsBtn.addEventListener('click', showBills);
     closeBillsBtn.addEventListener('click', () => {
-        billsModal.style.display = 'none'; // Cerrar el modal de facturas
+        billsModal.style.display = 'none';
     });
 
-    // Cerrar sesión
+    // Logout
     document.getElementById('logout').addEventListener('click', () => {
         localStorage.removeItem('token');
-        window.location.href = '/userLogin'; // Redirigir a la página de login
+        window.location.href = '/userLogin';
     });
 
-    // Cargar el carrito al iniciar la página
+    // Cargar carrito inicial
     loadCart();
-
-    // Exponer la función `updateQuantity` al contexto global para su uso en el HTML
     window.updateQuantity = updateQuantity;
 });

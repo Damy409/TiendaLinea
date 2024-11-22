@@ -16,7 +16,7 @@ const productsController = require('../controllers/productsController');
 // Esta ruta está disponible para todos los usuarios (no requiere autenticación)
 // Cuando el cliente envía una solicitud GET a '/', se ejecuta el método getProducts del controlador
 // Este método devuelve la lista de productos disponibles en la base de datos
-router.get('/', productsController.getProducts);
+router.get('/', productsController.getAllProducts);
 
 // Ruta para crear un nuevo producto
 // La ruta está protegida con los middlewares 'authenticateToken' e 'isAdmin' para asegurar que solo los usuarios autenticados y con rol de administrador puedan crear productos

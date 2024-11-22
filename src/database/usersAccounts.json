@@ -1,0 +1,16 @@
+[
+  {
+    "id": "1732233234627",
+    "email": "gomita@gmail.com",
+    "password": "$2a$10$S8r3qhErvnz0ZUUaTXl7ou6MRjxwJgZeg43e0CN4B5gn91nY9UfR2",
+    "role": "client",
+    "createdAt": "2024-11-21T23:53:54.627Z"
+  },
+  {
+    "id": "1732233537862",
+    "email": "damyvillegas7@gmail.com",
+    "password": "$2a$10$Qhh7krHokTLJjVpNFrFweOUJrqwJVw5QUSyxWeKgnrN810oISxBMi",
+    "role": "admin",
+    "createdAt": "2024-11-21T23:58:57.862Z"
+  }
+]

@@ -1,59 +1,60 @@
 const fs = require('fs').promises;
 const path = require('path');
-const invoices = require('../models/invoicesModel');
-const shoppingCart = require('../models/shoppingCartModel');
+const BillModel = require('../models/invoicesModel');
+const CartModel = require('../models/shoppingCartModel');
 
-const data_Dir = path.join(__dirname, '../data');
-const bills_File = path.join(data_Dir, 'invoicesData.json');
+const DATA_DIR = path.join(__dirname, '../database');
+const BILLS_FILE = path.join(DATA_DIR, 'invoicesData.json');
 
-class InvoiceController {
-    /**
-     * Inicializa el sistema asegurándose de que el directorio de datos y el archivo de facturas existan.
-     */
+class BillController {
     static async init() {
         try {
-            await fs.mkdir(data_Dir, { recursive: true });
+            await fs.mkdir(DATA_DIR, { recursive: true });
             try {
-                await fs.access(bills_File);
+                await fs.access(BILLS_FILE);
             } catch {
-                await fs.writeFile(bills_File, '[]', 'utf8');
+                await fs.writeFile(BILLS_FILE, '[]', 'utf8');
             }
         } catch (error) {
-            console.error('Error en la configuración de InvoiceController:', error);
+            console.error('Error inicializando BillController:', error);
             throw error;
         }
     }
 
-    /**
-     * Crea una nueva factura para el usuario y vacía el carrito de compras.
-     */
-    static async createInvoices(req, res) {
-        const userEmail = req.user.email;
+    static async createBill(req, res) {
         try {
-            const cartItems = await shoppingCart.getShoppingCart(userEmail);
-            const invoice = await invoices.createInvoice(userEmail, cartItems);
-            await shoppingCart.clearShoppingCart(userEmail);
+            const userEmail = req.user.email;
+            const cartItems = await CartModel.getCart(userEmail);
+            
+            const bill = await BillModel.createBill(userEmail, cartItems);
+            
+            // Limpiar carrito después de la compra
+            await CartModel.clearCart(userEmail);
 
-            res.status(201).json({ message: 'Compra realizada con éxito', invoice });
+            res.status(201).json({ message: 'Compra realizada con éxito', bill });
         } catch (error) {
-            console.error('Error al crear la factura:', error);
-            res.status(500).json({ message: 'Error procesando la compra', error: error.message });
+            console.error('Error al crear factura:', error);
+            res.status(500).json({ 
+                message: 'Error al procesar la compra',
+                error: error.message 
+            });
         }
     }
 
-    /**
-     * Obtiene las facturas del usuario autenticado.
-     */
-    static async getInvoices(req, res) {
-        const userEmail = req.user.email;
+    static async getBills(req, res) {
         try {
-            const userInvoices = await invoices.getInvoicesByUser(userEmail);
-            res.json(userInvoices);
+            const userEmail = req.user.email;
+            const bills = await BillModel.getBillsByUser(userEmail);
+            
+            res.json(bills);
         } catch (error) {
             console.error('Error al obtener facturas:', error);
-            res.status(500).json({ message: 'Error al obtener el historial de compras', error: error.message });
+            res.status(500).json({ 
+                message: 'Error al obtener historial de compras',
+                error: error.message 
+            });
         }
     }
 }
 
-module.exports = InvoiceController;
+module.exports = BillController;

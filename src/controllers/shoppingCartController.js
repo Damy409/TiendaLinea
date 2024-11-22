@@ -1,48 +1,29 @@
-const path = require('path');
-const fs = require('fs').promises;
+// src/controllers/cartController.js
 const CartModel = require('../models/shoppingCartModel');
 
-const INVOICES_PATH = path.join(__dirname, '../data/invoicesData.json');
-
-// Inicialización del archivo bills.json
-async function initializeInvoices() {
+exports.getCart = async (req, res) => {
     try {
-        await fs.access(INVOICES_PATH);
-    } catch {
-        await fs.writeFile(INVOICES_PATH, '[]', 'utf8');
-    }
-}
-
-exports.getShoppingCart = async (req, res) => {
-    try {
-        const userEmail = req.user.email; 
-        const itemsInCart = await CartModel.getShoppingCart(userEmail);
-        res.json(itemsInCart);
-    } catch (err) {
+        const userEmail = req.user.email; // ID del usuario autenticado
+        const cartItems = await CartModel.getCart(userEmail);
+        res.json(cartItems); // Solo los productos del carrito del usuario
+    } catch (error) {
         res.status(500).json({ 
-            message: 'Error al obtener el carrito.',
-            error: err.message 
+            message: 'Error al obtener el carrito',
+            error: error.message 
         });
     }
 };
 
-exports.addToShoppingCart = async (req, res) => {
+exports.addToCart = async (req, res) => {
     try {
-        const userEmail = req.user.email;
+        const userEmail = req.user.email; // Obtener el email del usuario autenticado
         const product = req.body;
-
-        if (!product || !product.id || !product.quantity) {
-            return res.status(400).json({ 
-                message: 'Faltan datos del producto (id, quantity).' 
-            });
-        }
-
-        const updatedCart = await CartModel.addToShoppingCart(userEmail, product);
+        const updatedCart = await CartModel.addToCart(userEmail, product);
         res.json(updatedCart);
-    } catch (err) {
+    } catch (error) {
         res.status(500).json({ 
-            message: 'Error al agregar al carrito.',
-            error: err.message 
+            message: 'Error al agregar al carrito',
+            error: error.message 
         });
     }
 };
@@ -50,85 +31,89 @@ exports.addToShoppingCart = async (req, res) => {
 exports.updateQuantity = async (req, res) => {
     try {
         const userEmail = req.user.email;
-        const { productId, quantity } = req.body;
-
-        if (!productId || quantity == null) {
-            return res.status(400).json({ 
-                message: 'Faltan datos para actualizar la cantidad.' 
-            });
-        }
-
+        const { productId, quantity } = req.body; // Changed from productEmail
         const updatedCart = await CartModel.updateQuantity(userEmail, productId, quantity);
         res.json(updatedCart);
-    } catch (err) {
+    } catch (error) {
         res.status(500).json({ 
-            message: 'Error al actualizar la cantidad del producto.',
-            error: err.message 
+            message: 'Error al actualizar cantidad',
+            error: error.message 
         });
     }
 };
 
-exports.removeFromShoppingCart = async (req, res) => {
+exports.removeFromCart = async (req, res) => {
     try {
         const userEmail = req.user.email;
-        const { productId } = req.params;
-
-        if (!productId) {
-            return res.status(400).json({ 
-                message: 'Se necesita el ID del producto para eliminarlo.' 
-            });
-        }
-
-        const updatedCart = await CartModel.removeFromShoppingCart(userEmail, productId);
+        const { productEmail } = req.params;
+        const updatedCart = await CartModel.removeFromCart(userEmail, productEmail);
         res.json(updatedCart);
-    } catch (err) {
+    } catch (error) {
         res.status(500).json({ 
-            message: 'Error al eliminar el producto del carrito.',
-            error: err.message 
+            message: 'Error al eliminar del carrito',
+            error: error.message 
         });
     }
 };
+
+const path = require('path');
+const fs = require('fs').promises;
+
+const BILLS_FILE = path.join(__dirname, '../database/invoicesData.json');
+
+// Inicialización del archivo bills.json
+async function initBills() {
+    try {
+        await fs.access(BILLS_FILE);
+    } catch {
+        await fs.writeFile(BILLS_FILE, '[]', 'utf8');
+    }
+}
+
 
 exports.checkout = async (req, res) => {
     try {
-        await initializeInvoices();
+        await initBills();
         const userEmail = req.user.email;
-        const itemsInCart = await CartModel.getShoppingCart(userEmail);
+        const cartItems = await CartModel.getCart(userEmail);
 
-        if (itemsInCart.length === 0) {
+        if (!cartItems.length) {
             return res.status(400).json({ message: 'El carrito está vacío.' });
         }
 
-        const invoice = {
+        // Crear factura
+        const bill = {
             id: Date.now(),
-            userEmail,
-            items: itemsInCart,
-            total: itemsInCart.reduce((acc, item) => acc + (item.price * item.quantity), 0),
-            createdAt: new Date().toISOString(),
+            userEmail: userEmail,
+            items: cartItems,
+            total: cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
+            createdAt: new Date().toISOString()
         };
 
-        const existingBills = JSON.parse(await fs.readFile(INVOICES_PATH, 'utf8'));
-        existingBills.push(invoice);
-        await fs.writeFile(INVOICES_PATH, JSON.stringify(existingBills, null, 2), 'utf8');
+        // Guardar factura
+        const billsData = JSON.parse(await fs.readFile(BILLS_FILE, 'utf8'));
+        billsData.push(bill);
+        await fs.writeFile(BILLS_FILE, JSON.stringify(billsData, null, 2), 'utf8');
 
-        await CartModel.clearShoppingCart(userEmail);
+        // Limpiar carrito
+        await CartModel.clearCart(userEmail);
 
-        res.json({ message: 'Compra realizada con éxito.', invoice });
-    } catch (err) {
-        console.error('Error durante el proceso de checkout:', err);
-        res.status(500).json({ message: 'Error al realizar la compra.' });
+        res.json({ message: 'Compra realizada con éxito', bill });
+    } catch (error) {
+        console.error('Error en el checkout:', error);
+        res.status(500).json({ message: 'Error procesando la compra.' });
     }
 };
 
 exports.getPurchaseHistory = async (req, res) => {
     try {
-        await initializeInvoices();
+        await initBills();
         const userEmail = req.user.email;
-        const existingBills = JSON.parse(await fs.readFile(INVOICES_PATH, 'utf8'));
-        const userBills = existingBills.filter(bill => bill.userEmail === userEmail);
+        const billsData = JSON.parse(await fs.readFile(BILLS_FILE, 'utf8'));
+        const userBills = billsData.filter(bill => bill.userEmail === userEmail);
         res.json(userBills);
-    } catch (err) {
-        console.error('Error al obtener el historial de compras:', err);
-        res.status(500).json({ message: 'Error al obtener el historial.' });
+    } catch (error) {
+        console.error('Error al obtener historial de compras:', error);
+        res.status(500).json({ message: 'Error obteniendo el historial de compras.' });
     }
 };

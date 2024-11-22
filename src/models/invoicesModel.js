@@ -1,59 +1,61 @@
 const fs = require('fs').promises;
 const path = require('path');
 
-const DATADIR = path.join(__dirname, '../data');
-const BILLSFILE = path.join(DATADIR, 'invoicesData.json');
+const DATA_DIR = path.join(__dirname, '../database');
+const BILLS_FILE = path.join(DATA_DIR, 'invoicesData.json');
 
-class Invoices {
+class BillModel {
+
     static async init() {
         try {
-            await fs.mkdir(DATADIR, { recursive: true });
+            await fs.mkdir(DATA_DIR, { recursive: true });
             try {
-                await fs.access(BILLSFILE);
+                await fs.access(BILLS_FILE);
             } catch {
-                await fs.writeFile(BILLSFILE, '[]', 'utf8');
+                await fs.writeFile(BILLS_FILE, '[]', 'utf8');
             }
         } catch (error) {
-            console.error('Error en la configuración de BillModel:', error);
+            console.error('Error inicializando BillModel:', error);
             throw error;
         }
     }
 
-    static async createInvoice(userEmail, cartItems) {
+    static async createBill(userEmail, items) {
         try {
             await this.init();
-            const currentData = await fs.readFile(BILLSFILE, 'utf8');
-            const invoices = JSON.parse(currentData);
+            const data = await fs.readFile(BILLS_FILE, 'utf8');
+            const bills = JSON.parse(data);
 
-            const newInvoice = {
+            const newBill = {
                 id: Date.now().toString(),
                 userEmail,
-                items: cartItems,
-                total: cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
+                items,
+                total: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
                 date: new Date().toISOString()
             };
 
-            invoices.push(newInvoice);
-            await fs.writeFile(BILLSFILE, JSON.stringify(invoices, null, 2), 'utf8');
-            return newInvoice;
+            bills.push(newBill);
+
+            await fs.writeFile(BILLS_FILE, JSON.stringify(bills, null, 2), 'utf8');
+            return newBill;
         } catch (error) {
-            console.error('Error al crear la factura:', error);
+            console.error('Error al crear factura:', error);
             throw error;
         }
     }
 
-    static async getInvoicesByUser(userEmail) {
+    static async getBillsByUser(userEmail) {
         try {
             await this.init();
-            const currentData = await fs.readFile(BILLSFILE, 'utf8');
-            const invoices = JSON.parse(currentData);
+            const data = await fs.readFile(BILLS_FILE, 'utf8');
+            const bills = JSON.parse(data);
 
-            return invoices.filter(invoice => invoice.userEmail === userEmail);
+            return bills.filter(bill => bill.userEmail === userEmail);
         } catch (error) {
-            console.error('Error al obtener las facturas:', error);
+            console.error('Error al obtener facturas:', error);
             throw error;
         }
     }
 }
 
-module.exports = Invoices;
+module.exports = BillModel;

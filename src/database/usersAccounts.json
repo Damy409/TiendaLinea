@@ -12,5 +12,19 @@
     "password": "$2a$10$Qhh7krHokTLJjVpNFrFweOUJrqwJVw5QUSyxWeKgnrN810oISxBMi",
     "role": "admin",
     "createdAt": "2024-11-21T23:58:57.862Z"
+  },
+  {
+    "id": "1732235250905",
+    "email": "jorluisvm@hotmail.com",
+    "password": "$2a$10$GVs1K.4Mm2/xDegW9OmDh.KYI40u.kpYjeMW9GLYeOpW7Ww4GWDxC",
+    "role": "client",
+    "createdAt": "2024-11-22T00:27:30.905Z"
+  },
+  {
+    "id": "1732235376690",
+    "email": "damyvillegas9@gmail.com",
+    "password": "$2a$10$8p3XkDmeySQy9T5scUNfYeeZCXKvwpMkU359XJkQEZJM9Aap8iCfS",
+    "role": "admin",
+    "createdAt": "2024-11-22T00:29:36.698Z"
   }
 ]

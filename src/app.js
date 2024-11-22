@@ -1,47 +1,46 @@
-const express = require("express");
-const cors = require("cors");
-const path = require("path");
-const userAuthRoutes = require("./routes/userAuthRoutes");
-const productsRoutes = require('./routes/productsRoutes');
-const shoppingCartRoutes = require('./routes/shoppingCartRoutes');
-// Añadir esta línea a las importaciones
-const invoicesRoutes = require('./routes/invoicesRoutes');
+// Importación de módulos necesarios
+const express = require("express"); // Framework para crear servidores web
+const cors = require("cors"); // Middleware para habilitar CORS (Cross-Origin Resource Sharing)
+const path = require("path"); // Módulo nativo para manejar rutas de archivos
+const userAuthRoutes = require("./routes/userAuthRoutes"); // Rutas para la autenticación de usuarios
+const productsRoutes = require('./routes/productsRoutes'); // Rutas para gestionar productos
+const shoppingCartRoutes = require('./routes/shoppingCartRoutes'); // Rutas para el carrito de compras
+const invoicesRoutes = require('./routes/invoicesRoutes'); // Rutas para la gestión de facturas
 
-// Añadir esta línea a las configuraciones de rutas
-
+// Creación de la aplicación Express
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3001; // Definición del puerto, con soporte para variables de entorno
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// Configuración de middlewares
+app.use(cors()); // Habilita CORS para permitir solicitudes desde otros dominios
+app.use(express.json()); // Middleware para interpretar cuerpos de solicitudes en formato JSON
 
-// Servir archivos estáticos
-app.use(express.static(path.join(__dirname, "../public")));
+// Configuración para servir archivos estáticos
+app.use(express.static(path.join(__dirname, "../public"))); // Carpeta pública que contiene archivos estáticos como HTML, CSS y JS
 
-// Configurar rutas de la API
-app.use("/api/auth", userAuthRoutes);
-app.use('/api/products', productsRoutes);
-app.use('/api/cart', shoppingCartRoutes);
-app.use('/api/bills', invoicesRoutes);
+// Configuración de rutas de la API
+app.use("/api/auth", userAuthRoutes); // Ruta base para autenticación de usuarios
+app.use('/api/products', productsRoutes); // Ruta base para productos
+app.use('/api/cart', shoppingCartRoutes); // Ruta base para carrito de compras
+app.use('/api/bills', invoicesRoutes); // Ruta base para facturas
 
-// ... otras rutas
-// Ruta para manejar las vistas HTML
+// Rutas para servir vistas HTML
 app.get(["/", "/adminDashboard", "/userLogin", "/register"], (req, res) => {
-    const pages = req.path === "/" ? "userLogin" : req.path.slice(1);
-    res.sendFile(path.join(__dirname, `../public/pages/${pages}.html`));
+    // Determina qué archivo HTML servir basado en la ruta solicitada
+    const pages = req.path === "/" ? "userLogin" : req.path.slice(1); 
+    res.sendFile(path.join(__dirname, `../public/pages/${pages}.html`)); // Envía el archivo correspondiente al cliente
 });
 
 // Manejador de errores
 app.use((err, req, res, next) => {
-    console.error(err.stack);
+    console.error(err.stack); // Muestra el error en la consola para depuración
     res.status(500).json({ 
-        message: 'Ups ocurrio un error!',
-        error: process.env.NODE_ENV === 'development' ? err.message : {}
+        message: 'Ups ocurrio un error!', // Mensaje amigable para el usuario
+        error: process.env.NODE_ENV === 'development' ? err.message : {} // Detalles solo en modo desarrollo
     });
 });
 
 // Iniciar el servidor
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    console.log(`Servidor corriendo en http://localhost:${PORT}`); // Mensaje informativo al iniciar el servidor
 });

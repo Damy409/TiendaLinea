@@ -1,4 +1,12 @@
-// Asegurarse de que el DOM está cargado
+/**
+ * Gestión de Productos - Panel de Administración.
+ * 
+ * Este script maneja la interfaz del administrador para agregar, listar, y gestionar productos.
+ * Incluye funcionalidades para validar el formulario, enviar datos al servidor y cargar
+ * los productos existentes desde el backend.
+ */
+
+// Asegurarse de que el DOM está completamente cargado antes de ejecutar el script.
 document.addEventListener('DOMContentLoaded', () => {
     const productForm = document.getElementById('product-form');
     
@@ -8,7 +16,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // Función para mostrar mensajes
+    /**
+     * Muestra mensajes de éxito o error en la interfaz.
+     * 
+     * @param {string} message - Mensaje a mostrar.
+     * @param {boolean} isError - Indica si el mensaje es de error (por defecto: false).
+     */
     function showMessage(message, isError = false) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${isError ? 'error-message' : 'success-message'}`;
@@ -28,10 +41,14 @@ document.addEventListener('DOMContentLoaded', () => {
         productForm.parentNode.insertBefore(messageDiv, productForm);
 
         // Remover el mensaje después de 3 segundos
-        setTimeout(() => messageDiv.remove(), 3000);
+        setTimeout(() => messageDiv.remove(), 3001);
     }
 
-    // Función para manejar el envío del formulario
+    /**
+     * Maneja el envío del formulario para agregar un producto.
+     * 
+     * @param {Event} event - Evento submit del formulario.
+     */
     async function handleAddProduct(event) {
         event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
 
@@ -83,7 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Función para cargar productos
+    /**
+     * Carga la lista de productos desde el servidor y los renderiza en la interfaz.
+     */
     async function loadProducts() {
         try {
             const response = await fetch('/api/products');

@@ -1,10 +1,25 @@
+/**
+ * Gestión de Productos y Carrito - Interacciones en el Cliente.
+ * 
+ * Este script maneja las operaciones de productos y carrito de compras en la interfaz del usuario.
+ * Incluye funcionalidades para cargar productos desde el backend, agregar productos al carrito,
+ * actualizar el contador del carrito, y gestionar la autenticación del usuario.
+ */
+
+
 // Constantes
+
 const API_URL = '/api/products';
 const CART_API_URL = '/api/cart';
 const productsContainer = document.getElementById('products-container');
 
 
-// Función para mostrar mensajes de alerta personalizados
+/**
+ * Muestra mensajes personalizados en la pantalla.
+ * 
+ * @param {string} message - El mensaje a mostrar.
+ * @param {boolean} isError - Indica si el mensaje es de error (por defecto: false).
+ */
 const showMessage = (message, isError = false) => {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${isError ? 'error-message' : 'success-message'}`;
@@ -23,7 +38,11 @@ const showMessage = (message, isError = false) => {
     setTimeout(() => messageDiv.remove(), 3001);
 };
 
-// Función para renderizar productos
+/**
+ * Renderiza la lista de productos en el DOM.
+ * 
+ * @param {Array} products - Lista de productos a mostrar.
+ */
 const renderProducts = (products) => {
     if (!productsContainer) return;
     
@@ -58,7 +77,11 @@ const renderProducts = (products) => {
     });
 };
 
-// Función para verificar el token
+/**
+ * Verifica si el usuario está autenticado.
+ * 
+ * @returns {string|boolean} Retorna el token si existe, o redirige al login si no.
+ */
 const checkAuthentication = () => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -68,7 +91,12 @@ const checkAuthentication = () => {
     return token;
 };
 
-// Función para manejar el estado de carga del botón
+/**
+ * Cambia el estado de carga de un botón.
+ * 
+ * @param {HTMLElement} button - Botón al que se aplicará el estado de carga.
+ * @param {boolean} isLoading - Indica si debe mostrarse como cargando.
+ */
 const toggleButtonLoading = (button, isLoading) => {
     const buttonText = button.querySelector('.button-text');
     const loadingSpinner = button.querySelector('.loading-spinner');
@@ -78,7 +106,13 @@ const toggleButtonLoading = (button, isLoading) => {
     loadingSpinner.style.display = isLoading ? 'inline' : 'none';
 };
 
-// Función para agregar al carrito
+/**
+ * Agrega un producto al carrito.
+ * 
+ * @param {string} productId - ID del producto a agregar.
+ * @param {Array} products - Lista de productos disponibles.
+ * @param {HTMLElement} button - Botón asociado al producto.
+ */
 const addToCart = async (productId, products, button) => {
     const token = checkAuthentication();
     if (!token) return;
@@ -119,7 +153,11 @@ const addToCart = async (productId, products, button) => {
 };
 
 
-// Función para actualizar el contador del carrito
+/**
+ * Actualiza el contador del carrito en el DOM.
+ * 
+ * @param {number} itemCount - Cantidad de productos en el carrito.
+ */
 const updateCartCounter = (itemCount) => {
     const cartCounter = document.getElementById('cart-counter');
     if (cartCounter) {
@@ -129,7 +167,9 @@ const updateCartCounter = (itemCount) => {
 };
 
 
-// Función para obtener productos del backend
+/**
+ * Obtiene la lista de productos desde el backend y los renderiza.
+ */
 const fetchProducts = async () => {
     try {
         const response = await fetch(API_URL);
@@ -144,7 +184,9 @@ const fetchProducts = async () => {
     }
 };
 
-// Función para cargar el contador inicial del carrito
+/**
+ * Carga el contador inicial del carrito desde el backend.
+ */
 const loadCartCounter = async () => {
     const token = localStorage.getItem('token');
     if (!token) return;
@@ -171,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadCartCounter();
 });
 
-// Manejar el cierre de sesión si existe el botón
+// Manejar el cierre de sesión 
 const logoutButton = document.getElementById('logout');
 if (logoutButton) {
     logoutButton.addEventListener('click', (e) => {

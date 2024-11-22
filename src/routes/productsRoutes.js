@@ -14,7 +14,7 @@ const productsController = require('../controllers/productsController');
 
 // Ruta para obtener todos los productos
 // Esta ruta está disponible para todos los usuarios (no requiere autenticación)
-// Cuando el cliente envía una solicitud GET a '/', se ejecuta el método getProducts del controlador
+// Cuando el cliente envía una solicitud GET a '/', se ejecuta el método getAllProducts del controlador
 // Este método devuelve la lista de productos disponibles en la base de datos
 router.get('/', productsController.getAllProducts);
 

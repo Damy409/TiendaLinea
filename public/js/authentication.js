@@ -1,9 +1,19 @@
-// public/js/authentications.js
+/**
+ * Autenticación - Registro e Inicio de Sesión.
+ * 
+ * Este script gestiona el registro e inicio de sesión de los usuarios en el cliente,
+ * comunicándose con el servidor a través de solicitudes API.
+ */
 
 // API base URL para las peticiones
 const API_URL = 'http://localhost:3001/api';
 
-// Función para mostrar mensajes de error/éxito
+/**
+ * Muestra mensajes de éxito o error en la interfaz.
+ * 
+ * @param {string} message - Mensaje a mostrar.
+ * @param {boolean} isError - Indica si el mensaje es de error (por defecto: false).
+ */
 const showMessage = (message, isError = false) => {
     const existingMessage = document.querySelector('.message');
     if (existingMessage) {
@@ -18,12 +28,20 @@ const showMessage = (message, isError = false) => {
     form.insertAdjacentElement('beforebegin', messageDiv);
 };
 
-// Función para guardar el token en localStorage
+/**
+ * Guarda el token en el almacenamiento local del navegador.
+ * 
+ * @param {string} token - Token JWT recibido del servidor.
+ */
 const saveToken = (token) => {
     localStorage.setItem('token', token);
 };
 
-// Función para manejar el registro de usuario
+/**
+ * Maneja el registro de un nuevo usuario.
+ * 
+ * @param {Event} e - Evento submit del formulario.
+ */
 const handleRegister = async (e) => {
     e.preventDefault();
     
@@ -56,7 +74,11 @@ const handleRegister = async (e) => {
     }
 };
 
-// Función para manejar el inicio de sesión
+/**
+ * Maneja el inicio de sesión del usuario.
+ * 
+ * @param {Event} e - Evento submit del formulario.
+ */
 const handleLogin = async (e) => {
     e.preventDefault();
     
@@ -92,7 +114,11 @@ const handleLogin = async (e) => {
     }
 };
 
-// Agregar event listeners según la página actual
+/**
+ * Agrega event listeners para manejar el registro y el inicio de sesión.
+ * 
+ * Los listeners se asignan según los formularios disponibles en la página.
+ */
 document.addEventListener('DOMContentLoaded', () => {
     const registerForm = document.getElementById('registerForm');
     const loginForm = document.getElementById('loginForm');
@@ -106,7 +132,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Agregar estilos para los mensajes
+/**
+ * Agrega estilos personalizados para los mensajes de éxito y error.
+ */
 const style = document.createElement('style');
 style.textContent = `
     .message {

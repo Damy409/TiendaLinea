@@ -14,13 +14,13 @@ const InvoiceController = require('../controllers/invoicesController');
 
 // Ruta para crear una nueva factura
 // La ruta está protegida con el middleware 'authenticateToken' para verificar que el usuario esté autenticado
-// Cuando el cliente envía una solicitud POST a '/create', se ejecuta el método createInvoices del controlador
+// Cuando el cliente envía una solicitud POST a '/create', se ejecuta el método createBill del controlador
 // Este método procesa los datos de la nueva factura y la crea en la base de datos
 router.post('/create', authenticateToken, InvoiceController.createBill);
 
 // Ruta para obtener las facturas del usuario
 // La ruta está protegida con el middleware 'authenticateToken' para verificar que el usuario esté autenticado
-// Cuando el cliente envía una solicitud GET a '/', se ejecuta el método getInvoices del controlador
+// Cuando el cliente envía una solicitud GET a '/', se ejecuta el método getBill del controlador
 // Este método devuelve las facturas asociadas al usuario autenticado
 router.get('/', authenticateToken, InvoiceController.getBills);
 

@@ -14,13 +14,13 @@ const shoppingCartController = require('../controllers/shoppingCartController');
 
 // Ruta para obtener el carrito de compras del usuario
 // La ruta usa el middleware 'authenticateToken' para asegurar que solo los usuarios autenticados puedan acceder a la información del carrito
-// Cuando el cliente envía una solicitud GET a '/', se ejecuta el método getShoppingCart del controlador
+// Cuando el cliente envía una solicitud GET a '/', se ejecuta el método getCart del controlador
 // Este método devuelve los productos actuales en el carrito de compras del usuario autenticado
 router.get('/', authenticateToken, shoppingCartController.getCart);
 
 // Ruta para agregar un producto al carrito de compras
 // La ruta usa el middleware 'authenticateToken' para verificar que el usuario esté autenticado
-// Cuando el cliente envía una solicitud POST a '/add', se ejecuta el método addToShoppingCart del controlador
+// Cuando el cliente envía una solicitud POST a '/add', se ejecuta el método addToCart del controlador
 // Este método agrega el producto especificado al carrito de compras del usuario autenticado
 router.post('/add', authenticateToken, shoppingCartController.addToCart);
 
@@ -32,7 +32,7 @@ router.put('/update', authenticateToken, shoppingCartController.updateQuantity);
 
 // Ruta para eliminar un producto del carrito de compras
 // La ruta usa el middleware 'authenticateToken' para verificar que el usuario esté autenticado
-// Cuando el cliente envía una solicitud DELETE a '/remove/:productId', se ejecuta el método removeFromShoppingCart del controlador
+// Cuando el cliente envía una solicitud DELETE a '/remove/:productId', se ejecuta el método removeFromCart del controlador
 // Este método elimina el producto con el ID especificado del carrito de compras del usuario autenticado
 router.delete('/remove/:productId', authenticateToken, shoppingCartController.removeFromCart);
 
